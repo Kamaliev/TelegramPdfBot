@@ -1,0 +1,3 @@
+aiogram~=2.15
+fpdf~=1.7.2
+Pillow~=8.4.0

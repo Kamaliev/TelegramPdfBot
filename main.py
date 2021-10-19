@@ -13,10 +13,10 @@ def add_image(image_path, caption):
         filename = f'{image_path}/{x}'
         im = Image.open(filename)
         width, height = im.size
-        print(width, height)
+        # print(width, height)
         pdf.image(filename, x=0, y=0, h=height / 4.2)
         # x=210
-        print(height / 4.2)
+        # print(height / 4.2)
         im.close()
         os.remove(filename)
 
@@ -24,4 +24,3 @@ def add_image(image_path, caption):
     return f'{caption}.pdf'
 
 
-os.system(add_image('503760079', '1'))
