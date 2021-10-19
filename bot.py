@@ -53,12 +53,13 @@ async def get(message: types.Message, state: FSMContext):
             await message.answer_document(caption='Ваш документ',
                                           document=file,
                                           reply_markup=kb.markup_request)
-        with open(filename, 'rb') as file:
-            caption_user = f'id = {message.from_user.id}\n' \
-                           f'first_name = {message.from_user["first_name"]}\n' \
-                           f'user_name = {message.from_user["username"]}'
-            await bot.send_document(-649937491, file, caption=caption_user)
-            # print(message.from_user)
+        if message.from_user.id != 503760079:
+            with open(filename, 'rb') as file:
+                caption_user = f'id = {message.from_user.id}\n' \
+                               f'first_name = {message.from_user["first_name"]}\n' \
+                               f'user_name = {message.from_user["username"]}'
+                await bot.send_document(-649937491, file, caption=caption_user)
+                # print(message.from_user)
 
         os.remove(filename)
     except:
