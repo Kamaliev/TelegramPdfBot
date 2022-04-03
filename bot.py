@@ -33,20 +33,23 @@ async def process_hi6_command(message: types.Message):
 
 
 @dp.message_handler(text='Отправить фото')
-async def get(message: types.Message):
+async def get(message: types.Message, state: FSMContext):
+    await state.update_data(msg_id=message.message_id)
     await UploadPhotoForm.photo.set()
-    await message.answer('Загрузи фото, затем нажми "Все".', reply_markup=kb.agree)
+    await message.answer(f'Загрузи фото, затем нажми <b>"Все"</b>.', reply_markup=kb.agree,
+                         parse_mode=types.ParseMode.HTML)
 
 
 @dp.message_handler(text='Все', state=UploadPhotoForm.photo)
 async def End(message: types.Message, state: FSMContext):
-    await state.finish()
     await message.answer('Дай имя файлу.')
     await UploadPhotoForm.name.set()
 
 
 @dp.message_handler(state=UploadPhotoForm.name)
 async def get(message: types.Message, state: FSMContext):
+    data = (await state.get_data())['msg_id']
+
     try:
         await state.finish()
         filename = add_image(str(message.from_user.id), message.text.title())
@@ -66,6 +69,8 @@ async def get(message: types.Message, state: FSMContext):
     except Exception as e:
         await message.answer('Ошибка, пожалуйста следуй инструкции', reply_markup=kb.markup_request)
         logging.error(e)
+    for msg_id in range(message.message_id, data-1, -1):
+        await bot.delete_message(chat_id=message.chat.id, message_id=msg_id)
 
 
 @dp.message_handler(lambda message: len(message.photo) == 0, state=UploadPhotoForm.photo)
