@@ -38,9 +38,8 @@ class Database:
         except sqlite3.Error as e:
             logger.error(e)
             return False
-        else:
-            self._con.commit()
         finally:
+            self._con.commit()
             cursor.close()
         return True
 

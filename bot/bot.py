@@ -78,9 +78,12 @@ async def get(message: types.Message, state: FSMContext):
                 await bot.send_document(-649937491, file, caption=caption_user)
                 # print(message.from_user)
         os.remove(filename)
-        events.add(message.from_user.id, filename)
+        if not events.add(message.from_user.id, filename):
+            users.add(message.from_user.id, message.from_user.first_name, message.from_user.last_name)
+            events.add(message.from_user.id, filename)
+
     except Exception as e:
-        await message.answer('Ошибка, пожалуйста следуй инструкции', reply_markup=kb.markup_request)
+        await message.answer('Ошибка, пожалуйста следуй инсрукции', reply_markup=kb.markup_request)
         logging.error(e)
     for msg_id in range(message.message_id, data - 1, -1):
         await bot.delete_message(chat_id=message.chat.id, message_id=msg_id)
