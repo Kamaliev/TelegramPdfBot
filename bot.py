@@ -1,6 +1,6 @@
 import logging
 import os
-import time
+from typing import List
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
@@ -8,6 +8,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 import keyboards as kb
 from config import Token
 from main import add_image
+from aiogram_media_group import MediaGroupFilter, media_group_handler
 
 API_TOKEN = Token
 
@@ -62,8 +63,9 @@ async def get(message: types.Message, state: FSMContext):
                 # print(message.from_user)
 
         os.remove(filename)
-    except:
+    except Exception as e:
         await message.answer('Ошибка, пожалуйста следуй инструкции', reply_markup=kb.markup_request)
+        logging.error(e)
 
 
 @dp.message_handler(lambda message: len(message.photo) == 0, state=UploadPhotoForm.photo)
@@ -76,17 +78,17 @@ async def process_photo_invalid(message: types.Message):
     return await message.reply("Фотография не найдена в сообщении!")
 
 
+@dp.message_handler(MediaGroupFilter(), content_types=['photo'], state=UploadPhotoForm.photo)
+@media_group_handler
+async def album_handler(messages: List[types.Message]):
+    for message in messages:
+        await message.photo[-1].download(destination_file=f"{message.from_user.id}/file_{message.message_id}.jpg")
+
+
 @dp.message_handler(content_types=['photo'], state=UploadPhotoForm.photo)
-async def get_photo(message: types.Message, state: FSMContext):
-    # print(message)
-    await message.photo[-1].download(f"{message.from_user.id}/file_{message.message_id}.jpg")
-    await state.finish()
-    await UploadPhotoForm.photo.set()
+async def get_photo(message: types.Message):
+    await message.photo[-1].download(destination_file=f"{message.from_user.id}/file_{message.message_id}.jpg")
 
 
 if __name__ == '__main__':
-    while True:
-        try:
-            executor.start_polling(dp, skip_updates=True)
-        except:
-            pass
+    executor.start_polling(dp, skip_updates=True)
