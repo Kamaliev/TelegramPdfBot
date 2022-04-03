@@ -6,5 +6,4 @@ create table Users(
     date datetime
 
 );
-select *
-from Users;
+select * from Users

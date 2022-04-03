@@ -1,4 +1,3 @@
-PRAGMA foreign_keys=on;
 drop table events;
 create table events(
     id integer primary key,
@@ -7,4 +6,4 @@ create table events(
     filename text,
     foreign key (user_id) references Users(id)
 );
-select * from events;
+select * from events
