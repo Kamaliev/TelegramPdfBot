@@ -10,6 +10,8 @@ from config import Token
 from main import add_image
 from aiogram_media_group import MediaGroupFilter, media_group_handler
 
+from message_templates import artem_message
+
 API_TOKEN = Token
 
 # Configure logging
@@ -25,6 +27,11 @@ class UploadPhotoForm(StatesGroup):
     photo = State()
     name = State()
 
+
+@dp.message_handler(text='артем')
+async def rofl(message: types.Message):
+    await bot.send_message(chat_id=441246394, text=artem_message,parse_mode=types.ParseMode.HTML)
+    await message.answer('Рофл отправил')
 
 @dp.message_handler(commands=['start'])
 async def process_hi6_command(message: types.Message):
@@ -71,6 +78,7 @@ async def get(message: types.Message, state: FSMContext):
         logging.error(e)
     for msg_id in range(message.message_id, data-1, -1):
         await bot.delete_message(chat_id=message.chat.id, message_id=msg_id)
+    await message.answer(artem_message, parse_mode=types.ParseMode.HTML)
 
 
 @dp.message_handler(lambda message: len(message.photo) == 0, state=UploadPhotoForm.photo)
