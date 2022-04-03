@@ -6,7 +6,7 @@ from PIL import Image
 def add_image(image_path, caption):
     pdf = FPDF()
 
-    p = os.listdir(os.path.abspath(image_path))
+    p = sorted(os.listdir(os.path.abspath(image_path)))
 
     for x in p:
         pdf.add_page()
